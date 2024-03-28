@@ -1,7 +1,6 @@
 package com.brianeno.springai.rag.config;
 
 import org.springframework.ai.embedding.EmbeddingClient;
-import org.springframework.ai.retriever.VectorStoreRetriever;
 import org.springframework.ai.vectorstore.PgVectorStore;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.context.annotation.Bean;
@@ -18,8 +17,5 @@ public class RagConfig {
         return new PgVectorStore(jdbcTemplate, embeddingClient);
     }
 
-    @Bean
-    public VectorStoreRetriever vectorStoreRetriever(VectorStore vectorStore) {
-        return new VectorStoreRetriever(vectorStore, 4, 0.75);
-    }
+
 }

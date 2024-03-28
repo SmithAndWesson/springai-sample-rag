@@ -22,7 +22,7 @@ import org.springframework.util.Assert;
 public class DataLoadingService {
     private static final Logger logger = LoggerFactory.getLogger(DataLoadingService.class);
 
-    @Value("classpath:/data/2023-infoq-trends-reports-emag-1703183112474.pdf")
+    @Value("classpath:/data/500_USER-RUSSIAN.pdf")
     private Resource documentResource;
 
     private final VectorStore vectorStore;

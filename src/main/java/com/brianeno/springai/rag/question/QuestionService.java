@@ -4,12 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.ChatClient;
 import org.springframework.ai.chat.ChatResponse;
+import org.springframework.ai.chat.prompt.SystemPromptTemplate;
 import org.springframework.ai.document.Document;
-import org.springframework.ai.prompt.Prompt;
-import org.springframework.ai.prompt.SystemPromptTemplate;
-import org.springframework.ai.prompt.messages.Message;
-import org.springframework.ai.prompt.messages.UserMessage;
-import org.springframework.ai.retriever.VectorStoreRetriever;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.vectorstore.SimpleVectorStore;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -32,12 +33,12 @@ public class QuestionService {
 
     private final ChatClient aiClient;
 
-    private final VectorStoreRetriever vectorStoreRetriever;
+    private final VectorStore vectorStore;
 
     @Autowired
-    public QuestionService(ChatClient aiClient, VectorStoreRetriever vectorStoreRetriever) {
+    public QuestionService(ChatClient aiClient, VectorStore vectorStore) {
         this.aiClient = aiClient;
-        this.vectorStoreRetriever = vectorStoreRetriever;
+        this.vectorStore = vectorStore;
     }
 
     public String generate(String message, boolean prompstuff) {
@@ -46,15 +47,15 @@ public class QuestionService {
         Prompt prompt = new Prompt(List.of(systemMessage, userMessage));
 
         logger.info("Asking AI model to reply to question.");
-        ChatResponse aiResponse = aiClient.generate(prompt);
+        ChatResponse aiResponse = aiClient.call(prompt);
         logger.info("AI responded.");
-        return aiResponse.getGeneration().getContent();
+        return aiResponse.getResult().getOutput().getContent();
     }
 
     private Message getSystemMessage(String message, boolean prompstuff) {
         if (prompstuff) {
             logger.info("Retrieving relevant documents");
-            List<Document> similarDocuments = vectorStoreRetriever.retrieve(message);
+            List<Document> similarDocuments = vectorStore.similaritySearch(message);
             logger.info(String.format("Found %s relevant documents.", similarDocuments.size()));
             String documents = similarDocuments.stream().map(Document::getContent).collect(Collectors.joining("\n"));
             SystemPromptTemplate systemPromptTemplate = new SystemPromptTemplate(this.qaSystemPromptResource);

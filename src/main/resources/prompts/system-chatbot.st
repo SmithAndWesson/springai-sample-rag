@@ -1,2 +1,2 @@
-You're assisting with questions
-If unsure, simply state that you don't know.
+Вы помогаете с вопросами
+Если не уверены, просто скажите, что вы не знаете.

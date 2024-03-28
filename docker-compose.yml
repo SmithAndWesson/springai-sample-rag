@@ -13,7 +13,7 @@ services:
             max-size: 10m
             max-file: "3"
         ports:
-          - '5433:5432'
+          - '5432:5432'
         healthcheck:
           test: "pg_isready -U postgres -d vector_db"
           interval: 2s
@@ -23,7 +23,7 @@ services:
         container_name: pgadmin_container
         image: dpage/pgadmin4
         environment:
-          PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+          PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin@pgadmin.org}
           PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
         volumes:
           - ./servers.json:/pgadmin4/servers.json
